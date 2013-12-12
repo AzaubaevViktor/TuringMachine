@@ -133,11 +133,14 @@ while 0 != tm.state:
         break
     printMem(tm.mem, tm.head, 20, tm.state)
     code = tm.step()
-    print("Code: q%d %d -> q%d %d %s" %(code[0],code[1],code[2],code[3],getSymByNum(code[4])))
+    if None != code:
+        print("Code: q%d %d -> q%d %d %s" % (code[0], code[1], code[2], code[3], getSymByNum(code[4])))
+    else:
+        print("Не найдена команда, программа завершилась некорректно.")
+        break
 
-
-printMem(tm.mem, tm.head, 20, tm.state)
-
-print("================================")
-print("Программа завершила свою работу.")
-print("Ответ: %d" % tm.getAnswer())
+if (0 == tm.state):
+    printMem(tm.mem, tm.head, 20, tm.state)
+    print("================================")
+    print("Программа завершила свою работу.")
+    print("Ответ: %d" % tm.getAnswer())
