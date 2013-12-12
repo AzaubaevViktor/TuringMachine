@@ -104,7 +104,10 @@ class TuringMachine():
 
 parser = argparse.ArgumentParser(add_help=True, description="Turing Machine")
 parser.add_argument("-f", "--filename", type=str, help="Имя файла с программой")
+parser.add_argument("-q", "--quiet", action="store_true", help="Вывод без отладочной информации")
 args = parser.parse_args()
+quietMode = args.quiet
+print(quietMode)
 filename = args.filename
 
 if (None == filename):
@@ -139,21 +142,29 @@ tm = TuringMachine(codes,args)
 
 kStep = 0
 while 0 != tm.state:
-    print("================================")
+    if not quietMode:
+        print("================================")
+
     kStep += 1
     if kStep > kSteps:
         print("Достигнуто максимальное количество шагов")
         break
-    printMem(tm.mem, tm.head, 20, tm.state)
+
+    if not quietMode:
+        printMem(tm.mem, tm.head, 20, tm.state)
+
     code = tm.step()
+
     if None != code:
-        print("Code: q%d %d -> q%d %d %s" % (code[0], code[1], code[2], code[3], getSymByNum(code[4])))
+        if not quietMode:
+            print("Code: q%d %d -> q%d %d %s" % (code[0], code[1], code[2], code[3], getSymByNum(code[4])))
     else:
         print("Не найдена команда, программа завершилась некорректно.")
         break
 
 if (0 == tm.state):
-    printMem(tm.mem, tm.head, 20, tm.state)
+    if not quietMode:
+        printMem(tm.mem, tm.head, 20, tm.state)
     print("================================")
-    print("Программа завершила свою работу.")
+    print("Программа завершила свою работу. Выполнено %d инструкций" % kStep)
     print("Ответ: %d" % tm.getAnswer())
