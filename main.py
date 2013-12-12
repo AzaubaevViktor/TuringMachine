@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 __author__ = 'ktulhy'
 
+__version__ = "0.1b"
 __supportedStructureVersion__ = [1]
 
 
