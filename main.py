@@ -71,23 +71,30 @@ class TuringMachine():
         self.maxMem = head
         self.head = 0
         self.state = 1
-        self.programm = programm
+        self.__precalc__(programm)
 
     def __addMem__(self):
         if self.head == self.maxMem:
             self.mem += [False for x in range(1024)]
             self.maxMem += 1024
 
+    def __precalc__(self, programm):
+        self.programm = {}
+        for code in programm:
+            if None == self.programm.get(code[0], None):
+                self.programm[code[0]] = [None, None]
+            self.programm[code[0]][code[1]] = code[2:]
+
     def step(self):
-        for code in self.programm:
-            if (self.state == code[0]) and (self.mem[self.head] == code[1]):
-                self.state = code[2]
-                self.mem[self.head] = code[3]
-                self.head += code[4]
-                self.__addMem__()
-                if self.head < 0:
-                    raise HeadError
-                return code
+        code = self.programm[self.state][self.mem[self.head]]
+        return_code = [self.state, self.mem[self.head]] + code
+        self.state = code[0]
+        self.mem[self.head] = code[1]
+        self.head += code[2]
+        self.__addMem__()
+        if self.head < 0:
+            raise HeadError
+        return return_code
 
     def getAnswer(self):
         ans = 0
