@@ -2,7 +2,8 @@
 # -*- coding:utf-8 -*-
 __author__ = 'ktulhy'
 
-__algoVersion__ = 1
+__supportedStructureVersion__ = [1]
+
 
 def __getNumBySymbol(sym):
     if 'R' == sym:
@@ -84,7 +85,7 @@ except FileNotFoundError:
     print("Не удалось открыть файл '%s' :(" % filename)
     exit()
 
-if __algoVersion__ != int(f.readline()):
+if int(f.readline()) not in __supportedStructureVersion__:
     print("Несовместимая версия файла")
     exit()
 
