@@ -87,14 +87,14 @@ class TuringMachine():
 
     def step(self):
         code = self.programm[self.state][self.mem[self.head]]
-        return_code = [self.state, self.mem[self.head]] + code
+        return_code = [self.state, self.mem[self.head]]
         self.state = code[0]
         self.mem[self.head] = code[1]
         self.head += code[2]
         self.__addMem__()
         if self.head < 0:
             raise HeadError
-        return return_code
+        return return_code + code
 
     def getAnswer(self):
         ans = 0
