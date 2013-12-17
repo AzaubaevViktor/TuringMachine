@@ -55,8 +55,7 @@ def printMem(mem, head, scatter, state):
         else:
             s += '0'
     s += "[" + str(end) + "]"
-    print(s)
-    print(" " * (head - start + (len(str(start)) + 2)) + "|" + str(state))
+    return s + "\n" + (" " * (head - start + (len(str(start)) + 2)) + "|" + str(state))
 
 
 class TuringMachine():
@@ -109,15 +108,32 @@ class TuringMachine():
         return -1
 
 
+def debugInfo(*args, **kwargs):
+    if (None == fout):
+        if not quietMode:
+            kwargs['end'] = ''
+            print(*args, **kwargs)
+    else:
+        fout.write(*args, **kwargs)
+
+
 parser = argparse.ArgumentParser(add_help=True, description="Turing Machine")
 parser.add_argument("-f", "--filename", type=str, help="Имя файла с программой")
 parser.add_argument("-q", "--quiet", action="store_true", help="Вывод без отладочной информации")
+parser.add_argument("-o", "--out", type=str, help="Имя файла для вывода отладочной информации")
 args = parser.parse_args()
 quietMode = args.quiet
-print(quietMode)
 filename = args.filename
+if (None == args.out):
+    fout = None
+else:
+    try:
+        fout = open(args.out, "wt")
+    except FileNotFoundError:
+        print("Не удалось открыть файл '%s' :(" % args.out)
+        exit()
 
-if (None == filename):
+if None == filename:
     print("Введите имя файла (без расширения):", end='')
     filename = input()
 filename += ".mt"
@@ -149,8 +165,7 @@ tm = TuringMachine(codes,args)
 
 kStep = 0
 while 0 != tm.state:
-    if not quietMode:
-        print("================================")
+    debugInfo("================================\n")
 
     kStep += 1
     if kStep > kSteps:
@@ -158,20 +173,17 @@ while 0 != tm.state:
         break
 
     if not quietMode:
-        printMem(tm.mem, tm.head, 20, tm.state)
+        debugInfo(printMem(tm.mem, tm.head, 20, tm.state) + '\n')
 
     code = tm.step()
 
     if None != code:
-        if not quietMode:
-            print("Code: q%d %d -> q%d %d %s" % (code[0], code[1], code[2], code[3], getSymByNum(code[4])))
+        debugInfo("Code: q%d %d -> q%d %d %s\n" % (code[0], code[1], code[2], code[3], getSymByNum(code[4])))
     else:
         print("Не найдена команда, программа завершилась некорректно.")
         break
 
 if (0 == tm.state):
-    if not quietMode:
-        printMem(tm.mem, tm.head, 20, tm.state)
-    print("================================")
+    debugInfo(printMem(tm.mem, tm.head, 20, tm.state) + "\n================================\n")
     print("Программа завершила свою работу. Выполнено %d инструкций" % kStep)
     print("Ответ: %d" % tm.getAnswer())
